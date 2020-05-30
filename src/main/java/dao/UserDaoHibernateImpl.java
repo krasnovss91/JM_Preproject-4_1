@@ -15,54 +15,71 @@ public class UserDaoHibernateImpl implements UserDao {
     }
 
     @Override
-    public List<User> getAllUsersDao() {
+    public List<User> getAllUsersDao() throws HibernateException {
         Session session = sessionFactory.openSession();
         Transaction transaction = session.beginTransaction();
         List<User> allUsers = session.createQuery("FROM User").list();
-        transaction.commit();
-        session.close();
-        return allUsers;
-
+        try {
+            transaction.commit();
+        } catch (HibernateException e) {
+            transaction.rollback();
+        } finally {
+            session.close();
+            return allUsers;
+        }
     }
 
     @Override
-    public User getUserByIdDao(long id) {
+    public User getUserByIdDao(long id) throws HibernateException {
         Session session = sessionFactory.openSession();
         Transaction transaction = session.beginTransaction();
         Query query = session.createQuery("from User where id = :userId");
         List<User> userList = query.setParameter("userId", id).list();
         User user = userList.get(0);
-
-        transaction.commit();
-        session.close();
-        return user;
+        try {
+            transaction.commit();
+        } catch (HibernateException e) {
+            transaction.rollback();
+        } finally {
+            session.close();
+            return user;
+        }
     }
 
     @Override
-    public boolean checkUserByNameDao(String name) {
+    public boolean checkUserByNameDao(String name) throws HibernateException {
         Session session = sessionFactory.openSession();
         Transaction transaction = session.beginTransaction();
         Query query = session.createQuery("from User where name = :userName");
         List<User> userList = query.setParameter("userName", name).list();
-
-        transaction.commit();
-        session.close();
-        if (userList.size() > 0) {
-            return false;
-        } else return true;
+        try {
+            transaction.commit();
+        } catch (HibernateException e) {
+            transaction.rollback();
+        } finally {
+            session.close();
+            if (userList.size() > 0) {
+                return false;
+            } else return true;
+        }
     }
 
     @Override
-    public boolean checkUserByLoginDao(String login) {
+    public boolean checkUserByLoginDao(String login) throws HibernateException {
         Session session = sessionFactory.openSession();
         Transaction transaction = session.beginTransaction();
         Query query = session.createQuery("from User where login = :userLogin");
         List<User> userList = query.setParameter("userLogin", login).list();
-        transaction.commit();
-        session.close();
-        if (userList.size() > 0) {
-            return false;
-        } else return true;
+        try {
+            transaction.commit();
+        } catch (HibernateException e) {
+            transaction.rollback();
+        } finally {
+            session.close();
+            if (userList.size() > 0) {
+                return false;
+            } else return true;
+        }
     }
 
     @Override
@@ -117,7 +134,7 @@ public class UserDaoHibernateImpl implements UserDao {
     }
 
     @Override
-    public User isExist(String login, String password) {
+    public User isExist(String login, String password) throws HibernateException {
         Session session = sessionFactory.openSession();
         Transaction transaction = session.beginTransaction();
         Query query = session.createQuery("from User where login = :userLogin");
@@ -129,10 +146,14 @@ public class UserDaoHibernateImpl implements UserDao {
                 userExist = user;
             }
         }
-        transaction.commit();
-        session.close();
-        return userExist;
+        try {
+            transaction.commit();
+        } catch (HibernateException e) {
+            transaction.rollback();
+        } finally {
+            session.close();
+            return userExist;
+        }
     }
-
 
 }
