@@ -62,7 +62,7 @@ public class UserService {
         return false;
     }
 
-    public void addUser(User user) {
+    public void addUser(User user) throws SQLException {
         if (user.getName() != null && user.getName().length() > 0
                 && user.getLogin() != null && user.getLogin().length() > 0
                 && user.getPassword() != null && user.getPassword().length() > 0)
@@ -81,7 +81,7 @@ public class UserService {
         }
     }
 
-    public void updateUser(User user) {
+    public void updateUser(User user) throws SQLException {
 
         if (user.getName() != null && user.getName().length() > 0
                 && user.getLogin() != null && user.getLogin().length() > 0

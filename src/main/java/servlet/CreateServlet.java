@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.SQLException;
 
 @WebServlet("/admin/create")
 public class CreateServlet extends HttpServlet {
@@ -35,9 +36,13 @@ public class CreateServlet extends HttpServlet {
 
         User newUser = new User(nameUser, loginUser, passwordUser, role);
 
-                userService.addUser(newUser);
+        try {
+            userService.addUser(newUser);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
-            resp.sendRedirect("/jsp_hibernate_project_war/admin");;
+        resp.sendRedirect("/jsp_hibernate_project_war/admin");;
 
     }
 

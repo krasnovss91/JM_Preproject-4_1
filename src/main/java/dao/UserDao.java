@@ -20,10 +20,10 @@ public interface UserDao {
     boolean checkUserByLoginDao(String login) throws SQLException;
 
 
-    void addUserDao(User user);
+    void addUserDao(User user) throws SQLException;
 
 
-    void updateUserDao(User user);
+    void updateUserDao(User user) throws SQLException;
 
 
     void deleteUserByIdDao(Long id) throws SQLException;

@@ -1,6 +1,5 @@
 package dao;
 
-
 import model.User;
 
 import java.sql.*;
@@ -63,7 +62,7 @@ public class UserDaoJDBCimpl implements UserDao {
     }
 
 
-    public long getUserIdByName(String name)  {
+    public long getUserIdByName(String name) {
         String sql = "SELECT * FROM users WHERE name = ?";
         long id = 0L;
         try (PreparedStatement preStmt = connection.prepareStatement(sql)) {
@@ -151,59 +150,61 @@ public class UserDaoJDBCimpl implements UserDao {
     }
 
     @Override
-    public void addUserDao(User user)  {
-        String sql = "INSERT INTO users (name, login, password, role) VALUES (?, ?, ?,?)";
-        try (PreparedStatement preStmt = connection.prepareStatement(sql)) {
-            preStmt.setString(1, user.getName());
-            preStmt.setString(2, user.getLogin());
-            preStmt.setString(3, user.getPassword());
-            preStmt.setString(4, user.getRole());
-
-            preStmt.executeUpdate();
+    public void addUserDao(User user) throws SQLException {
+        String sql = "INSERT INTO users (name, login, password) VALUES (?, ?, ?)";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            connection.setAutoCommit(false);
+            preparedStatement.setString(1, user.getName());
+            preparedStatement.setString(2, user.getLogin());
+            preparedStatement.setString(3, user.getPassword());
+            preparedStatement.executeUpdate();
+            connection.commit();
         } catch (SQLException e) {
             e.printStackTrace();
+            connection.rollback();
+        } finally {
+            connection.setAutoCommit(true);
+        }
+
+    }
+
+    @Override
+    public void updateUserDao(User user) throws SQLException {
+
+        String sql = "UPDATE users SET name = ?, login = ?, password = ? WHERE id = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            connection.setAutoCommit(false);
+            preparedStatement.setString(1, user.getName());
+            preparedStatement.setString(2, user.getLogin());
+            preparedStatement.setString(3, user.getPassword());
+            preparedStatement.setLong(4, user.getId());
+            preparedStatement.executeUpdate();
+            connection.commit();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            connection.rollback();
+        } finally {
+            connection.setAutoCommit(true);
         }
     }
 
     @Override
-    public void updateUserDao(User user) {
-        String sql = "UPDATE users SET name = ?, login = ?, password = ?, role = ? WHERE id = ?";
-        try (PreparedStatement preStmt = connection.prepareStatement(sql)) {
-
-            preStmt.setString(1, user.getName());
-            preStmt.setString(2, user.getLogin());
-            preStmt.setString(3, user.getPassword());
-            preStmt.setString(4, user.getRole());
-            preStmt.setLong(5, user.getId());
-            preStmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    public void deleteUserByName(String name) {
-        User user = getUserByName(name);
-        String sql = "DELETE FROM users WHERE name = ?";
-        try (PreparedStatement preStmt = connection.prepareStatement(sql)) {
-            preStmt.setString(1, user.getName());
-            preStmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void deleteUserByIdDao(Long id) {
+    public void deleteUserByIdDao(Long id) throws SQLException {
         String sql = "DELETE FROM users WHERE id = ?";
-        try (PreparedStatement preStmt = connection.prepareStatement(sql)) {
-            preStmt.setLong(1, id);
-
-            preStmt.executeUpdate();
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            connection.setAutoCommit(false);
+            preparedStatement.setLong(1, id);
+            preparedStatement.executeUpdate();
+            connection.commit();
         } catch (SQLException e) {
             e.printStackTrace();
+            connection.rollback();
+        } finally {
+            connection.setAutoCommit(true);
         }
+
     }
+
     @Override
     public User isExist(String login, String password) {
         return null;
@@ -223,4 +224,3 @@ public class UserDaoJDBCimpl implements UserDao {
 
 
 }
-
