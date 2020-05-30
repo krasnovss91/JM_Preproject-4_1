@@ -43,6 +43,10 @@ public class LoginFilter implements Filter {
             pwriter.println("Data is empty!");
         }
         User userTryLogin = UserService.getInstance().isExist(login, password);
+        
+        if(userTryLogin == null){
+            pwriter.println("User not found!");
+        }
 
         String userRole = userTryLogin.getRole();
 
