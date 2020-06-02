@@ -3,6 +3,7 @@ package dao;
 import model.User;
 import org.hibernate.*;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -19,7 +20,7 @@ public class UserDaoHibernateImpl implements UserDao {
         Session session = sessionFactory.openSession();
         Transaction transaction = session.beginTransaction();
         List<User> allUsers = session.createQuery("FROM User").list();
-        try {
+        try{
             transaction.commit();
         } catch (HibernateException e) {
             transaction.rollback();
@@ -36,7 +37,7 @@ public class UserDaoHibernateImpl implements UserDao {
         Query query = session.createQuery("from User where id = :userId");
         List<User> userList = query.setParameter("userId", id).list();
         User user = userList.get(0);
-        try {
+        try{
             transaction.commit();
         } catch (HibernateException e) {
             transaction.rollback();
